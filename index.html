@@ -1,1 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KantinKu - Smart Canteen & Pre-Order</title>
 
+  <!-- Menggunakan Google Font Plus Jakarta Sans untuk tampilan modern -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- NAVBAR UTAMA                               -->
+  <!-- ========================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fa-solid fa-bowl-food"></i> KantinKu
+      </div>
+
+      <!-- Sakelar Peran: Siswa / Tenant -->
+      <div class="role-selector">
+        <button class="role-btn active" id="btn-siswa" onclick="switchRole('siswa')">
+          <i class="fa-solid fa-graduation-cap"></i> Siswa
+        </button>
+        <button class="role-btn" id="btn-tenant" onclick="switchRole('tenant')">
+          <i class="fa-solid fa-store"></i> Tenant
+        </button>
+      </div>
+
+      <!-- Indikator Poin & Keranjang Desktop -->
+      <div class="nav-actions">
+        <div class="poin-badge" title="Poin Jajan Anda">
+          <i class="fa-solid fa-coins"></i> <span id="user-points">120</span> Poin
+        </div>
+        <div class="nav-cart-btn" onclick="toggleCartModal(true)">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span>Keranjang</span>
+          <span class="cart-badge" id="cart-count-desktop">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MODUS SISWA / PEMBELI                      -->
+  <!-- ========================================== -->
+  <main id="buyer-section" class="main-content">
+    
+    <!-- Hero Banner Promo -->
+    <section class="hero-banner">
+      <div class="banner-tag"><i class="fa-solid fa-star"></i> Promo Awal Semester</div>
+      <h2>Diskon 20% Pakai Kode: <span class="promo-code">SEMESTERBARU</span> 🚀</h2>
+      <p>Kumpulkan Poin Jajan setiap kali pesan. Dapatkan minuman gratis di transaksi berikutnya!</p>
+    </section>
+
+    <!-- Tombol Cepat Re-Order (Pesan Ulang 1-Click) -->
+    <section class="reorder-section">
+      <div class="reorder-card">
+        <div>
+          <small><i class="fa-solid fa-rotate-left"></i> Pesan Ulang Favoritmu</small>
+          <h4>Nasi Goreng Spesial (Bu Sri)</h4>
+        </div>
+        <button class="btn-secondary" onclick="quickReorder()">
+          <i class="fa-solid fa-bolt"></i> Re-Order (Rp 15.000)
+        </button>
+      </div>
+    </section>
+
+    <!-- Pencarian & Filter Tenant -->
+    <section class="filter-section">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-input" placeholder="Cari mie ayam, es teh, bakso..." oninput="filterMenu()">
+      </div>
+
+      <div class="category-scroll">
+        <button class="cat-btn active" onclick="filterByTenant('ALL', this)">Semua Stand</button>
+        <button class="cat-btn" onclick="filterByTenant('Kantin Bu Sri', this)">Kantin Bu Sri</button>
+        <button class="cat-btn" onclick="filterByTenant('Stand Bakso Pak Kumis', this)">Bakso Pak Kumis</button>
+        <button class="cat-btn" onclick="filterByTenant('Kedai Minuman Segar', this)">Minuman Segar</button>
+      </div>
+    </section>
+
+    <!-- Grid Menu Makanan -->
+    <section class="menu-section">
+      <h3>Daftar Menu Favorit</h3>
+      <div class="menu-grid" id="menu-grid-container">
+        <!-- Diisi oleh script.js -->
+      </div>
+    </section>
+
+    <!-- Daftar Pesanan Aktif -->
+    <section class="active-orders-section">
+      <h3><i class="fa-solid fa-clock-rotate-left"></i> Pesanan Aktif Anda</h3>
+      <div id="active-orders-container">
+        <p class="empty-state">Belum ada pesanan aktif saat ini.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODUS TENANT / PENJUAL                     -->
+  <!-- ========================================== -->
+  <main id="merchant-section" class="main-content hidden">
+    
+    <div class="merchant-header">
+      <h2>Dashboard Pengelola Kantin 👨‍🍳</h2>
+      <p>Atur kuota slot jam istirahat, stok makanan, dan panggil nomor antrean secara otomatis.</p>
+    </div>
+
+    <!-- Status Kuota Slot Istirahat -->
+    <section class="quota-management">
+      <h3>Sisa Kuota Slot Istirahat Hari Ini</h3>
+      <div class="quota-grid" id="quota-grid-container">
+        <!-- Diisi oleh script.js -->
+      </div>
+    </section>
+
+    <!-- Manajemen Stok Menu -->
+    <section class="stock-management">
+      <h3>Status Stok Menu</h3>
+      <div class="stock-list" id="merchant-stock-list">
+        <!-- Diisi oleh script.js -->
+      </div>
+    </section>
+
+    <!-- Pesanan Masuk Pelanggan -->
+    <section class="incoming-orders">
+      <h3>Antrean Pesanan Masuk (Pre-Order)</h3>
+      <div class="order-list" id="merchant-order-list">
+        <!-- Diisi oleh script.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL KERANJANG & CHECKOUT                 -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="cart-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-basket-shopping"></i> Keranjang Belanja</h3>
+        <button class="close-btn" onclick="toggleCartModal(false)">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Daftar Produk -->
+        <div id="cart-items-list"></div>
+
+        <!-- Voucher Promo -->
+        <div class="voucher-box">
+          <label><i class="fa-solid fa-ticket"></i> Kode Promo Diskon:</label>
+          <div class="voucher-input-group">
+            <input type="text" id="promo-input" placeholder="Masukkan kode (contoh: SEMESTERBARU)">
+            <button onclick="applyPromo()">Gunakan</button>
+          </div>
+          <small id="promo-message"></small>
+        </div>
+
+        <!-- Form Waktu & Bayar -->
+        <div class="checkout-form">
+          <label for="pickup-time"><i class="fa-regular fa-clock"></i> Jam Pengambilan (Sisa Kuota):</label>
+          <select id="pickup-time"></select>
+
+          <label for="payment-method"><i class="fa-solid fa-wallet"></i> Metode Pembayaran:</label>
+          <select id="payment-method">
+            <option value="QRIS KantinKu">QRIS (GoPay / OVO / DANA / LinkAja)</option>
+            <option value="Saldo Student Pass">Saldo Kartu Pelajar (NFC)</option>
+          </select>
+
+          <!-- Rincian Biaya -->
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="summary-subtotal">Rp 0</span>
+            </div>
+            <div class="summary-row" id="row-discount" style="display:none; color: var(--accent-color);">
+              <span>Diskon Promo:</span>
+              <span id="summary-discount">-Rp 0</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total Pembayaran:</span>
+              <strong id="cart-total-price">Rp 0</strong>
+            </div>
+            <small style="color:var(--primary-color); display:block; margin-top:4px;">
+              <i class="fa-solid fa-coins"></i> Dapatkan +<span id="earned-points">0</span> Poin Jajan dari transaksi ini!
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="toggleCartModal(false)">Batal</button>
+        <button class="btn-primary" onclick="submitOrder()">Konfirmasi & Bayar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL BUKTI QR CODE NOTA                   -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="qr-modal">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h3>Nota & QR Code Pengambilan</h3>
+        <button class="close-btn" onclick="toggleQrModal(false)">&times;</button>
+      </div>
+      <div class="modal-body" id="qr-modal-body">
+        <!-- Diisi oleh script.js -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="toggleQrModal(false)">Tutup Nota</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL RATING & ULASAN MAKANAN              -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="review-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Beri Ulasan Makanan ⭐️</h3>
+        <button class="close-btn" onclick="toggleReviewModal(false)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Bagaimana rasa makanan pesanan Anda?</p>
+        <div class="star-rating" id="star-rating-box">
+          <i class="fa-solid fa-star star" data-value="1" onclick="selectStar(1)"></i>
+          <i class="fa-solid fa-star star" data-value="2" onclick="selectStar(2)"></i>
+          <i class="fa-solid fa-star star" data-value="3" onclick="selectStar(3)"></i>
+          <i class="fa-solid fa-star star" data-value="4" onclick="selectStar(4)"></i>
+          <i class="fa-solid fa-star star" data-value="5" onclick="selectStar(5)"></i>
+        </div>
+        <textarea id="review-text" rows="3" placeholder="Tuliskan ulasan Anda (misal: Rasa mantap, porsi banyak!)..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="submitReview()">Kirim Ulasan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- BOTTOM NAV (SMARTPHONE)                    -->
+  <!-- ========================================== -->
+  <nav class="mobile-bottom-nav">
+    <button class="nav-item active" id="mnav-home" onclick="switchRole('siswa')">
+      <i class="fa-solid fa-house"></i>
+      <span>Beranda</span>
+    </button>
+    <button class="nav-item" onclick="toggleCartModal(true)">
+      <div class="cart-badge-wrapper">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span class="cart-badge" id="cart-count-mobile">0</span>
+      </div>
+      <span>Keranjang</span>
+    </button>
+    <button class="nav-item" id="mnav-tenant" onclick="switchRole('tenant')">
+      <i class="fa-solid fa-store"></i>
+      <span>Tenant</span>
+    </button>
+  </nav>
+
+  <!-- Script JS -->
+  <script src="script.js"></script>
+</body>
+</html>
